@@ -446,6 +446,7 @@ Private Sub SetColor()
         Else
             mColorOff = ShiftColor(mColorOff, vbWhite, 80)
         End If
+        mBorderColor = ShiftColor(mBorderColor, vbWhite, 180)
     End If
     SetOn = mStateOn
 End Sub

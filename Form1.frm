@@ -105,9 +105,9 @@ Begin VB.Form Form1
       Width           =   324
       _ExtentX        =   572
       _ExtentY        =   572
-      BorderColor     =   9342606
+      BorderColor     =   11513775
       ColorOn         =   16777215
-      ColorOff        =   14145495
+      ColorOff        =   14737632
       Color           =   4
    End
    Begin Proyect1.LED LED1 
@@ -119,8 +119,8 @@ Begin VB.Form Form1
       Width           =   324
       _ExtentX        =   572
       _ExtentY        =   572
-      BorderColor     =   6448249
-      ColorOff        =   10856118
+      BorderColor     =   9474720
+      ColorOff        =   14935016
    End
    Begin Proyect1.LED LED1 
       Height          =   324
@@ -131,9 +131,9 @@ Begin VB.Form Form1
       Width           =   324
       _ExtentX        =   572
       _ExtentY        =   572
-      BorderColor     =   7048047
+      BorderColor     =   9940377
       ColorOn         =   65280
-      ColorOff        =   10729637
+      ColorOff        =   14871011
       Color           =   1
    End
    Begin Proyect1.LED LED1 
@@ -145,9 +145,9 @@ Begin VB.Form Form1
       Width           =   324
       _ExtentX        =   572
       _ExtentY        =   572
-      BorderColor     =   6786958
+      BorderColor     =   9744559
       ColorOn         =   65535
-      ColorOff        =   12110795
+      ColorOff        =   13819614
       Color           =   3
    End
    Begin Proyect1.LED LED1 
@@ -159,9 +159,9 @@ Begin VB.Form Form1
       Width           =   324
       _ExtentX        =   572
       _ExtentY        =   572
-      BorderColor     =   10452601
+      BorderColor     =   12297376
       ColorOn         =   16763822
-      ColorOff        =   13417143
+      ColorOff        =   16250100
       Color           =   2
    End
    Begin VB.Label Label4 
@@ -217,14 +217,7 @@ Private Sub cboBlinkType_Click()
 End Sub
 
 Private Sub cboShape_Click()
-    Dim c  As Long
-    
-    For c = LED1.lbound To LED1.UBound
-        LED1(c).Shape = cboShape.ListIndex
-        If (cboShape.ListIndex = ledRectangle) Or (cboShape.ListIndex = ledRoundedRectangle) Then
-            LED1(c).Width = LED1(c).Height * 0.7
-        End If
-    Next
+    cboStyle_Click
 End Sub
 
 Private Sub cboState_Click()
@@ -238,9 +231,15 @@ End Sub
 Private Sub cboStyle_Click()
     Dim c  As Long
     
+    If cboStyle.ListIndex = -1 Then Exit Sub
+    If cboShape.ListIndex = -1 Then Exit Sub
     For c = LED1.lbound To LED1.UBound
+        LED1(c).Shape = cboShape.ListIndex
+        If (cboShape.ListIndex = ledRectangle) Or (cboShape.ListIndex = ledRoundedRectangle) Then
+            LED1(c).Width = LED1(c).Height * 0.7
+        End If
         LED1(c).Style = cboStyle.ListIndex
-        If cboStyle.ListIndex = ledStyle3D Then
+        If (cboStyle.ListIndex = ledStyle3D) And (LED1(c).Shape = ledRound) Then
             LED1(c).BorderWidth = 1
         Else
             LED1(c).BorderWidth = 2
