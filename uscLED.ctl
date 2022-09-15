@@ -48,51 +48,51 @@ Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 Public Enum veLEDShapeConstants
-    veLedRound
-    veLedSquare
-    veLedRectangle
-    veLedRoundedSquare
-    veLedRoundedRectangle
+    ledRound
+    ledSquare
+    ledRectangle
+    ledRoundedSquare
+    ledRoundedRectangle
 End Enum
 
 Public Enum veLEDBlinkTypeConstants
-    veLedShorter
-    veLedShort
-    veLedMedium
-    veLedLong
-    veLedDouble
+    ledBlinkShorter
+    ledBlinkShort
+    ledBlinkMedium
+    ledBlinkLong
+    ledBlinkTwice
 End Enum
 
 Public Enum veLEDStateConstants
-    veLedOff
-    veLedOn
-    veLedBlinking
+    ledOff
+    ledOn
+    ledBlinking
 End Enum
 
 Public Enum veLEDColorConstants
-    veLedRed
-    veLedGreen
-    veLedBlue
-    veLedYellow
-    veLedWhite
-    veLedCustomColor
+    ledRed
+    ledGreen
+    ledBlue
+    ledYellow
+    ledWhite
+    ledCustomColor
 End Enum
 
 ' Property defaults
-Private Const mdef_Shape = veLedRound
-Private Const mdef_BlinkRate = 700
-Private Const mdef_BlinkType = veLedShort
+Private Const mdef_Shape = ledRound
+Private Const mdef_BlinkPeriod = 700
+Private Const mdef_BlinkType = ledBlinkShort
 Private Const mdef_BorderWidth = 2
 Private Const mdef_BorderColor = &HC0&
 Private Const mdef_ColorOn = vbRed
 Private Const mdef_ColorOff = &H808080
-Private Const mdef_State = veLedOn
-Private Const mdef_Color = veLedRed
+Private Const mdef_State = ledOn
+Private Const mdef_Color = ledRed
 Private Const mdef_ToggleOnClick = False
 
 ' Properties
 Private mShape As veLEDShapeConstants
-Private mBlinkRate As Long
+Private mBlinkPeriod As Long
 Private mBlinkType As veLEDBlinkTypeConstants
 Private mBorderWidth As Long
 Private mBorderColor As Long
@@ -104,10 +104,10 @@ Private mToggleOnClick As Boolean
 
 Private Sub ShapeEx1_Click()
     If mToggleOnClick Then
-        If mState = veLedOn Then
-            State = veLedOff
-        ElseIf mState = veLedOff Then
-            State = veLedOn
+        If mState = ledOn Then
+            State = ledOff
+        ElseIf mState = ledOff Then
+            State = ledOn
         End If
     End If
     RaiseEvent Click
@@ -133,19 +133,19 @@ Private Sub tmrBlink_Timer()
     Dim t As Long
     Dim b As Long
     
-    t = Round((Timer * 1000 Mod mBlinkRate) / 100)
+    t = Round((Timer * 1000 Mod mBlinkPeriod) / 100)
     'Debug.Print t
 
-    If mBlinkType = veLedShorter Then
+    If mBlinkType = ledBlinkShorter Then
         SetOn = (t = 0)
-    ElseIf mBlinkType = veLedShort Then
+    ElseIf mBlinkType = ledBlinkShort Then
         SetOn = (t = 0) Or (t = 1)
-    ElseIf mBlinkType = veLedDouble Then
+    ElseIf mBlinkType = ledBlinkTwice Then
         SetOn = (t = 0) Or (t = 2)
-    ElseIf mBlinkType = veLedLong Then
+    ElseIf mBlinkType = ledBlinkLong Then
         SetOn = (t <> 0) And (t <> 1)
     Else ' medium
-        SetOn = Round((Timer * 1000 Mod mBlinkRate) / 100) > (mBlinkRate / 100 / 2)
+        SetOn = Round((Timer * 1000 Mod mBlinkPeriod) / 100) > (mBlinkPeriod / 100 / 2)
     End If
 End Sub
 
@@ -161,7 +161,7 @@ End Sub
 
 Private Sub UserControl_InitProperties()
     mShape = mdef_Shape
-    mBlinkRate = mdef_BlinkRate
+    mBlinkPeriod = mdef_BlinkPeriod
     mBlinkType = mdef_BlinkType
     mBorderWidth = mdef_BorderWidth
     mBorderColor = mdef_BorderColor
@@ -181,7 +181,7 @@ End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     mShape = PropBag.ReadProperty("Shape", mdef_Shape)
-    mBlinkRate = PropBag.ReadProperty("BlinkRate", mdef_BlinkRate)
+    mBlinkPeriod = PropBag.ReadProperty("BlinkPeriod", mdef_BlinkPeriod)
     mBlinkType = PropBag.ReadProperty("BlinkType", mdef_BlinkType)
     mBorderWidth = PropBag.ReadProperty("BorderWidth", mdef_BorderWidth)
     mBorderColor = PropBag.ReadProperty("BorderColor", mdef_BorderColor)
@@ -198,7 +198,7 @@ Private Sub UserControl_Resize()
     
     If (UserControl.Height < 7 * Screen.TwipsPerPixelY) Then UserControl.Height = 7 * Screen.TwipsPerPixelY
     Select Case mShape
-        Case veLedRound, veLedSquare, veLedRoundedSquare
+        Case ledRound, ledSquare, ledRoundedSquare
             iWidth = UserControl.Height
             UserControl.Width = iWidth
         Case Else
@@ -211,7 +211,7 @@ End Sub
 
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "Shape", mShape, mdef_Shape
-    PropBag.WriteProperty "BlinkRate", mBlinkRate, mdef_BlinkRate
+    PropBag.WriteProperty "BlinkPeriod", mBlinkPeriod, mdef_BlinkPeriod
     PropBag.WriteProperty "BlinkType", mBlinkType, mdef_BlinkType
     PropBag.WriteProperty "BorderWidth", mBorderWidth, mdef_BorderWidth
     PropBag.WriteProperty "BorderColor", mBorderColor, mdef_BorderColor
@@ -229,7 +229,7 @@ End Property
 
 Public Property Let Shape(nValue As veLEDShapeConstants)
     If nValue <> mShape Then
-        If (nValue < veLedRound) Or (nValue > veLedRoundedRectangle) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < ledRound) Or (nValue > ledRoundedRectangle) Then Err.Raise 380, TypeName(Me): Exit Property
         mShape = nValue
         UserControl_Resize
         ShowControl
@@ -238,15 +238,15 @@ Public Property Let Shape(nValue As veLEDShapeConstants)
 End Property
 
 
-Public Property Get BlinkRate() As Long
-    BlinkRate = mBlinkRate
+Public Property Get BlinkPeriod() As Long
+    BlinkPeriod = mBlinkPeriod
 End Property
 
-Public Property Let BlinkRate(nValue As Long)
-    If nValue <> mBlinkRate Then
+Public Property Let BlinkPeriod(nValue As Long)
+    If nValue <> mBlinkPeriod Then
         If (nValue < 300) Or (nValue > 60000) Then Err.Raise 380, TypeName(Me): Exit Property
-        mBlinkRate = nValue
-        PropertyChanged "BlinkRate"
+        mBlinkPeriod = nValue
+        PropertyChanged "BlinkPeriod"
     End If
 End Property
 
@@ -257,7 +257,7 @@ End Property
 
 Public Property Let BlinkType(nValue As veLEDBlinkTypeConstants)
     If nValue <> mBlinkType Then
-        If (nValue < veLedShorter) Or (nValue > veLedDouble) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < ledBlinkShorter) Or (nValue > ledBlinkTwice) Then Err.Raise 380, TypeName(Me): Exit Property
         mBlinkType = nValue
         PropertyChanged "BlinkType"
     End If
@@ -285,7 +285,7 @@ End Property
 Public Property Let BorderColor(nValue As OLE_COLOR)
     If nValue <> mBorderColor Then
         mBorderColor = nValue
-        mColor = veLedCustomColor
+        mColor = ledCustomColor
         ShowControl
         PropertyChanged "BorderColor"
     End If
@@ -299,8 +299,8 @@ End Property
 Public Property Let ColorOn(nValue As OLE_COLOR)
     If nValue <> mColorOn Then
         mColorOn = nValue
-        mColor = veLedCustomColor
-        If mState = veLedOn Then
+        mColor = ledCustomColor
+        If mState = ledOn Then
             ShowControl
         End If
         PropertyChanged "ColorOn"
@@ -315,8 +315,8 @@ End Property
 Public Property Let ColorOff(nValue As OLE_COLOR)
     If nValue <> mColorOff Then
         mColorOff = nValue
-        mColor = veLedCustomColor
-        If mState = veLedOff Then
+        mColor = ledCustomColor
+        If mState = ledOff Then
             ShowControl
         End If
         PropertyChanged "ColorOff"
@@ -330,7 +330,7 @@ End Property
 
 Public Property Let State(nValue As veLEDStateConstants)
     If nValue <> mState Then
-        If (nValue < veLedOff) Or (nValue > veLedBlinking) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < ledOff) Or (nValue > ledBlinking) Then Err.Raise 380, TypeName(Me): Exit Property
         mState = nValue
         SetState
         PropertyChanged "State"
@@ -344,7 +344,7 @@ End Property
 
 Public Property Let Color(nValue As veLEDColorConstants)
     If nValue <> mColor Then
-        If (nValue < veLedRed) Or (nValue > veLedCustomColor) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < ledRed) Or (nValue > ledCustomColor) Then Err.Raise 380, TypeName(Me): Exit Property
         mColor = nValue
         ShowControl
         PropertyChanged "Color"
@@ -368,13 +368,13 @@ End Property
 Private Sub ShowControl()
     UserControl.BackColor = Ambient.BackColor
     SetColor
-    If mShape = veLedSquare Then
+    If mShape = ledSquare Then
         ShapeEx1.Shape = veShapeSquare
-    ElseIf mShape = veLedRectangle Then
+    ElseIf mShape = ledRectangle Then
         ShapeEx1.Shape = veShapeRectangle
-    ElseIf mShape = veLedRoundedSquare Then
+    ElseIf mShape = ledRoundedSquare Then
         ShapeEx1.Shape = veShapeRoundedSquare
-    ElseIf mShape = veLedRoundedRectangle Then
+    ElseIf mShape = ledRoundedRectangle Then
         ShapeEx1.Shape = veShapeRoundedRectangle
     Else ' round
         ShapeEx1.Shape = veShapeCircle
@@ -385,20 +385,20 @@ Private Sub ShowControl()
 End Sub
 
 Private Sub SetColor()
-    If mColor >= veLedCustomColor Then Exit Sub
-    If mColor = veLedRed Then
+    If mColor >= ledCustomColor Then Exit Sub
+    If mColor = ledRed Then
         mBorderColor = &H626479
         mColorOn = vbRed
         mColorOff = &HA5A6B6
-    ElseIf mColor = veLedGreen Then
+    ElseIf mColor = ledGreen Then
         mColorOn = vbGreen
         mBorderColor = &H6B8B6F
         mColorOff = &HA3B8A5
-    ElseIf mColor = veLedBlue Then
+    ElseIf mColor = ledBlue Then
         mColorOn = &HFFCBAE     ' &H00DF684A&
         mBorderColor = &H9F7E79
         mColorOff = &HCCBAB7
-    ElseIf mColor = veLedYellow Then
+    ElseIf mColor = ledYellow Then
         mColorOn = vbYellow
         mBorderColor = &H678F8E
         mColorOff = &HB8CBCB
@@ -410,11 +410,11 @@ Private Sub SetColor()
 End Sub
 
 Private Sub SetState()
-    If mState = veLedBlinking Then
+    If mState = ledBlinking Then
         SetOn = True
         If Ambient.UserMode Then tmrBlink.Enabled = True
         'tmrBlink.Enabled = True
-    ElseIf mState = veLedOff Then
+    ElseIf mState = ledOff Then
         tmrBlink.Enabled = False
         SetOn = False
     Else ' on

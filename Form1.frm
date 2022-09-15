@@ -40,7 +40,7 @@ Begin VB.Form Form1
       Top             =   1680
       Width           =   1992
    End
-   Begin VB.TextBox txtBlinkRate 
+   Begin VB.TextBox txtBlinkPeriod 
       Height          =   360
       Left            =   2340
       TabIndex        =   8
@@ -60,9 +60,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox cboState 
       Height          =   336
-      ItemData        =   "Form1.frx":00AC
+      ItemData        =   "Form1.frx":00AB
       Left            =   2340
-      List            =   "Form1.frx":00B9
+      List            =   "Form1.frx":00B8
       Style           =   2  'Dropdown List
       TabIndex        =   2
       Top             =   240
@@ -156,12 +156,12 @@ Begin VB.Form Form1
    End
    Begin VB.Label Label3 
       Alignment       =   1  'Right Justify
-      Caption         =   "BlinkRate:"
+      Caption         =   "BlinkPeriod:"
       Height          =   312
-      Left            =   1440
+      Left            =   1020
       TabIndex        =   7
       Top             =   1260
-      Width           =   852
+      Width           =   1272
    End
    Begin VB.Label Label2 
       Alignment       =   1  'Right Justify
@@ -202,7 +202,7 @@ Private Sub cboShape_Click()
     
     For c = LED1.lbound To LED1.UBound
         LED1(c).Shape = cboShape.ListIndex
-        If (cboShape.ListIndex = veLedRectangle) Or (cboShape.ListIndex = veLedRoundedRectangle) Then
+        If (cboShape.ListIndex = ledRectangle) Or (cboShape.ListIndex = ledRoundedRectangle) Then
             LED1(c).Width = LED1(c).Height * 0.7
         End If
     Next
@@ -233,23 +233,23 @@ End Sub
 
 Private Sub LED1_Click(Index As Integer)
     If LED1(Index).ToggleOnClick Then
-        If LED1(Index).State = veLedBlinking Then
+        If LED1(Index).State = ledBlinking Then
             MsgBox "While blinking can't be toggled.", vbExclamation
         End If
     End If
 End Sub
 
-Private Sub txtBlinkRate_Change()
+Private Sub txtBlinkPeriod_Change()
     Dim c  As Long
     Dim iNewVal As Long
     
-    iNewVal = Val(txtBlinkRate.Text)
+    iNewVal = Val(txtBlinkPeriod.Text)
     If (iNewVal < 300) Or (iNewVal > 60000) Then
-        txtBlinkRate.BackColor = &HC0C0FF
+        txtBlinkPeriod.BackColor = &HC0C0FF
     Else
-        txtBlinkRate.BackColor = vbWindowBackground
+        txtBlinkPeriod.BackColor = vbWindowBackground
         For c = LED1.lbound To LED1.UBound
-            LED1(c).BlinkRate = iNewVal
+            LED1(c).BlinkPeriod = iNewVal
         Next
     End If
 End Sub

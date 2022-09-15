@@ -326,10 +326,6 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
     RaiseEvent MouseUp(Button, Shift, X, Y)
 End Sub
 
-Private Sub UserControl_OLEStartDrag(Data As DataObject, AllowedEffects As Long)
-
-End Sub
-
 Private Sub UserControl_Paint()
     Dim hRgn As Long
     Dim rgnRect As RECT
