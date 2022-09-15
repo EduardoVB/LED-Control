@@ -478,7 +478,7 @@ Private Property Let SetOn(nValue As Boolean)
             ShapeEx1.Style3D = veStyle3DAddShadow
         End If
     Else
-        ShapeEx1.Style3D = veStyle3DNo
+        ShapeEx1.Style3D = veStyle3DNone
     End If
 End Property
 
