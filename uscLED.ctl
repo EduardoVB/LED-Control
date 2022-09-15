@@ -47,7 +47,7 @@ Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Public Enum veLEDShapeConstants
+Public Enum LEDShapeConstants
     ledRound
     ledSquare
     ledRectangle
@@ -55,7 +55,7 @@ Public Enum veLEDShapeConstants
     ledRoundedRectangle
 End Enum
 
-Public Enum veLEDBlinkTypeConstants
+Public Enum LEDBlinkTypeConstants
     ledBlinkShorter
     ledBlinkShort
     ledBlinkMedium
@@ -63,13 +63,13 @@ Public Enum veLEDBlinkTypeConstants
     ledBlinkTwice
 End Enum
 
-Public Enum veLEDStateConstants
+Public Enum LEDStateConstants
     ledOff
     ledOn
     ledBlinking
 End Enum
 
-Public Enum veLEDColorConstants
+Public Enum LEDColorConstants
     ledRed
     ledGreen
     ledBlue
@@ -78,29 +78,41 @@ Public Enum veLEDColorConstants
     ledCustomColor
 End Enum
 
+Public Enum LEDStyleConstants
+    ledStyle2D
+    ledStyle3D
+End Enum
+
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+Private Declare Function OleTranslateColor Lib "oleaut32.dll" (ByVal lOleColor As Long, ByVal lHPalette As Long, ByVal lColorRef As Long) As Long
+
 ' Property defaults
 Private Const mdef_Shape = ledRound
 Private Const mdef_BlinkPeriod = 700
 Private Const mdef_BlinkType = ledBlinkShort
-Private Const mdef_BorderWidth = 2
+Private Const mdef_BorderWidth = 1
 Private Const mdef_BorderColor = &HC0&
 Private Const mdef_ColorOn = vbRed
 Private Const mdef_ColorOff = &H808080
 Private Const mdef_State = ledOn
 Private Const mdef_Color = ledRed
 Private Const mdef_ToggleOnClick = False
+Private Const mdef_Style = ledStyle3D
 
 ' Properties
-Private mShape As veLEDShapeConstants
+Private mShape As LEDShapeConstants
 Private mBlinkPeriod As Long
-Private mBlinkType As veLEDBlinkTypeConstants
+Private mBlinkType As LEDBlinkTypeConstants
 Private mBorderWidth As Long
 Private mBorderColor As Long
 Private mColorOn As Long
 Private mColorOff As Long
-Private mState As veLEDStateConstants
-Private mColor As veLEDColorConstants
+Private mState As LEDStateConstants
+Private mColor As LEDColorConstants
 Private mToggleOnClick As Boolean
+Private mStyle As LEDStyleConstants
+
+Private mStateOn As Boolean
 
 Private Sub ShapeEx1_Click()
     If mToggleOnClick Then
@@ -170,6 +182,7 @@ Private Sub UserControl_InitProperties()
     mState = mdef_State
     mColor = mdef_Color
     mToggleOnClick = mdef_ToggleOnClick
+    mStyle = mdef_Style
     ShowControl
 End Sub
 
@@ -190,6 +203,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     mState = PropBag.ReadProperty("State", mdef_State)
     mColor = PropBag.ReadProperty("Color", mdef_Color)
     mToggleOnClick = PropBag.ReadProperty("ToggleOnClick", mdef_ToggleOnClick)
+    mStyle = PropBag.ReadProperty("Style", mdef_Style)
     ShowControl
 End Sub
 
@@ -220,14 +234,15 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "State", mState, mdef_State
     PropBag.WriteProperty "Color", mColor, mdef_Color
     PropBag.WriteProperty "ToggleOnClick", mToggleOnClick, mdef_ToggleOnClick
+    PropBag.WriteProperty "Style", mStyle, mdef_Style
 End Sub
 
 
-Public Property Get Shape() As veLEDShapeConstants
+Public Property Get Shape() As LEDShapeConstants
     Shape = mShape
 End Property
 
-Public Property Let Shape(nValue As veLEDShapeConstants)
+Public Property Let Shape(nValue As LEDShapeConstants)
     If nValue <> mShape Then
         If (nValue < ledRound) Or (nValue > ledRoundedRectangle) Then Err.Raise 380, TypeName(Me): Exit Property
         mShape = nValue
@@ -251,11 +266,11 @@ Public Property Let BlinkPeriod(nValue As Long)
 End Property
 
 
-Public Property Get BlinkType() As veLEDBlinkTypeConstants
+Public Property Get BlinkType() As LEDBlinkTypeConstants
     BlinkType = mBlinkType
 End Property
 
-Public Property Let BlinkType(nValue As veLEDBlinkTypeConstants)
+Public Property Let BlinkType(nValue As LEDBlinkTypeConstants)
     If nValue <> mBlinkType Then
         If (nValue < ledBlinkShorter) Or (nValue > ledBlinkTwice) Then Err.Raise 380, TypeName(Me): Exit Property
         mBlinkType = nValue
@@ -324,11 +339,11 @@ Public Property Let ColorOff(nValue As OLE_COLOR)
 End Property
 
 
-Public Property Get State() As veLEDStateConstants
+Public Property Get State() As LEDStateConstants
     State = mState
 End Property
 
-Public Property Let State(nValue As veLEDStateConstants)
+Public Property Let State(nValue As LEDStateConstants)
     If nValue <> mState Then
         If (nValue < ledOff) Or (nValue > ledBlinking) Then Err.Raise 380, TypeName(Me): Exit Property
         mState = nValue
@@ -338,11 +353,11 @@ Public Property Let State(nValue As veLEDStateConstants)
 End Property
 
 
-Public Property Get Color() As veLEDColorConstants
+Public Property Get Color() As LEDColorConstants
     Color = mColor
 End Property
 
-Public Property Let Color(nValue As veLEDColorConstants)
+Public Property Let Color(nValue As LEDColorConstants)
     If nValue <> mColor Then
         If (nValue < ledRed) Or (nValue > ledCustomColor) Then Err.Raise 380, TypeName(Me): Exit Property
         mColor = nValue
@@ -365,6 +380,19 @@ Public Property Let ToggleOnClick(nValue As Boolean)
 End Property
 
 
+Public Property Get Style() As LEDStyleConstants
+    Style = mStyle
+End Property
+
+Public Property Let Style(nValue As LEDStyleConstants)
+    If nValue <> mStyle Then
+        mStyle = nValue
+        ShowControl
+        PropertyChanged "Style"
+    End If
+End Property
+
+
 Private Sub ShowControl()
     UserControl.BackColor = Ambient.BackColor
     SetColor
@@ -381,6 +409,7 @@ Private Sub ShowControl()
     End If
     ShapeEx1.BorderWidth = mBorderWidth
     ShapeEx1.BorderColor = mBorderColor
+    
     SetState
 End Sub
 
@@ -407,6 +436,18 @@ Private Sub SetColor()
         mBorderColor = &H8E8E8E     ' &H4EA09C
         mColorOff = &HD7D7D7
     End If
+    If mStyle = ledStyle3D Then
+        If (mColor = ledBlue) Then
+            mColorOff = ShiftColor(mColorOff, vbWhite, 40)
+        ElseIf (mColor = ledWhite) Then
+            mColorOff = ShiftColor(mColorOff, vbWhite, 200)
+        ElseIf (mColor = ledYellow) Then
+            mColorOff = ShiftColor(mColorOff, vbWhite, 160)
+        Else
+            mColorOff = ShiftColor(mColorOff, vbWhite, 80)
+        End If
+    End If
+    SetOn = mStateOn
 End Sub
 
 Private Sub SetState()
@@ -429,4 +470,29 @@ Private Property Let SetOn(nValue As Boolean)
     Else
         ShapeEx1.FillColor = mColorOff
     End If
+    mStateOn = nValue
+    If mStyle = ledStyle3D Then
+        If mStateOn Then
+            ShapeEx1.Style3D = veStyle3DAddBoth
+        Else
+            ShapeEx1.Style3D = veStyle3DAddShadow
+        End If
+    Else
+        ShapeEx1.Style3D = veStyle3DNo
+    End If
 End Property
+
+' From Leandro Ascierto
+Private Function ShiftColor(ByVal clrFirst As Long, ByVal clrSecond As Long, ByVal lAlpha As Long) As Long
+    Dim clrFore(3)         As Byte
+    Dim clrBack(3)         As Byte
+ 
+    OleTranslateColor clrFirst, 0, VarPtr(clrFore(0))
+    OleTranslateColor clrSecond, 0, VarPtr(clrBack(0))
+    
+    clrFore(0) = (clrFore(0) * lAlpha + clrBack(0) * (255 - lAlpha)) / 255
+    clrFore(1) = (clrFore(1) * lAlpha + clrBack(1) * (255 - lAlpha)) / 255
+    clrFore(2) = (clrFore(2) * lAlpha + clrBack(2) * (255 - lAlpha)) / 255
+     
+    CopyMemory ShiftColor, clrFore(0), 4
+End Function

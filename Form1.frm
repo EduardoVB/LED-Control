@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form Form1 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Form1"
-   ClientHeight    =   2904
+   ClientHeight    =   3252
    ClientLeft      =   2112
    ClientTop       =   2736
    ClientWidth     =   4836
@@ -18,13 +18,23 @@ Begin VB.Form Form1
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   2904
+   ScaleHeight     =   3252
    ScaleWidth      =   4836
-   Begin VB.ComboBox cboToggleOnClick 
+   Begin VB.ComboBox cboStyle 
       Height          =   336
       ItemData        =   "Form1.frx":0000
       Left            =   2340
       List            =   "Form1.frx":000A
+      Style           =   2  'Dropdown List
+      TabIndex        =   16
+      Top             =   2640
+      Width           =   1992
+   End
+   Begin VB.ComboBox cboToggleOnClick 
+      Height          =   336
+      ItemData        =   "Form1.frx":0016
+      Left            =   2340
+      List            =   "Form1.frx":0020
       Style           =   2  'Dropdown List
       TabIndex        =   14
       Top             =   2160
@@ -32,9 +42,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox cboShape 
       Height          =   336
-      ItemData        =   "Form1.frx":001B
+      ItemData        =   "Form1.frx":0031
       Left            =   2340
-      List            =   "Form1.frx":002E
+      List            =   "Form1.frx":0044
       Style           =   2  'Dropdown List
       TabIndex        =   11
       Top             =   1680
@@ -50,9 +60,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox cboBlinkType 
       Height          =   336
-      ItemData        =   "Form1.frx":006F
+      ItemData        =   "Form1.frx":0085
       Left            =   2340
-      List            =   "Form1.frx":0082
+      List            =   "Form1.frx":0098
       Style           =   2  'Dropdown List
       TabIndex        =   5
       Top             =   720
@@ -60,13 +70,22 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox cboState 
       Height          =   336
-      ItemData        =   "Form1.frx":00AB
+      ItemData        =   "Form1.frx":00C1
       Left            =   2340
-      List            =   "Form1.frx":00B8
+      List            =   "Form1.frx":00CE
       Style           =   2  'Dropdown List
       TabIndex        =   2
       Top             =   240
       Width           =   1992
+   End
+   Begin VB.Label Label6 
+      Alignment       =   1  'Right Justify
+      Caption         =   "Style:"
+      Height          =   312
+      Left            =   780
+      TabIndex        =   15
+      Top             =   2700
+      Width           =   1512
    End
    Begin VB.Label Label5 
       Alignment       =   1  'Right Justify
@@ -216,6 +235,19 @@ Private Sub cboState_Click()
     Next
 End Sub
 
+Private Sub cboStyle_Click()
+    Dim c  As Long
+    
+    For c = LED1.lbound To LED1.UBound
+        LED1(c).Style = cboStyle.ListIndex
+        If cboStyle.ListIndex = ledStyle3D Then
+            LED1(c).BorderWidth = 1
+        Else
+            LED1(c).BorderWidth = 2
+        End If
+    Next
+End Sub
+
 Private Sub cboToggleOnClick_Click()
     Dim c  As Long
     
@@ -229,6 +261,7 @@ Private Sub Form_Load()
     cboBlinkType.ListIndex = 1
     cboShape.ListIndex = 0
     cboToggleOnClick.ListIndex = 0
+    cboStyle.ListIndex = 1
 End Sub
 
 Private Sub LED1_Click(Index As Integer)
