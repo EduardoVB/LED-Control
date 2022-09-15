@@ -336,7 +336,7 @@ Private Sub UserControl_InitProperties()
     mUserMode = Ambient.UserMode
     On Error GoTo 0
     SetCurvingFactor2
-    pvSubclass
+    'pvSubclass
 End Sub
 
 Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -503,11 +503,11 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     mUserMode = Ambient.UserMode
     On Error GoTo 0
     SetCurvingFactor2
-    pvSubclass
+    'pvSubclass
 End Sub
 
 Private Sub UserControl_Terminate()
-    pvUnsubclass
+    'pvUnsubclass
     If mGdipToken <> 0 Then
         TerminateGDI
     End If
