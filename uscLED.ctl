@@ -17,6 +17,7 @@ Begin VB.UserControl LED
    HasDC           =   0   'False
    ScaleHeight     =   2880
    ScaleWidth      =   3840
+   ToolboxBitmap   =   "uscLED.ctx":0000
    Windowless      =   -1  'True
    Begin VB.Timer tmrBlink 
       Enabled         =   0   'False
@@ -27,11 +28,13 @@ Begin VB.UserControl LED
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   432
       Left            =   480
+      TabIndex        =   0
       Top             =   420
       Width           =   912
       _ExtentX        =   1609
       _ExtentY        =   762
       FillStyle       =   0
+      UseSubclassing  =   0
    End
 End
 Attribute VB_Name = "LED"
@@ -397,15 +400,15 @@ Private Sub ShowControl()
     UserControl.BackColor = Ambient.BackColor
     SetColor
     If mShape = ledSquare Then
-        ShapeEx1.Shape = veShapeSquare
+        ShapeEx1.Shape = seShapeSquare
     ElseIf mShape = ledRectangle Then
-        ShapeEx1.Shape = veShapeRectangle
+        ShapeEx1.Shape = seShapeRectangle
     ElseIf mShape = ledRoundedSquare Then
-        ShapeEx1.Shape = veShapeRoundedSquare
+        ShapeEx1.Shape = seShapeRoundedSquare
     ElseIf mShape = ledRoundedRectangle Then
-        ShapeEx1.Shape = veShapeRoundedRectangle
+        ShapeEx1.Shape = seShapeRoundedRectangle
     Else ' round
-        ShapeEx1.Shape = veShapeCircle
+        ShapeEx1.Shape = seShapeCircle
     End If
     ShapeEx1.BorderWidth = mBorderWidth
     ShapeEx1.BorderColor = mBorderColor
@@ -474,12 +477,12 @@ Private Property Let SetOn(nValue As Boolean)
     mStateOn = nValue
     If mStyle = ledStyle3D Then
         If mStateOn Then
-            ShapeEx1.Style3D = veStyle3DAddBoth
+            ShapeEx1.Style3D = seStyle3DBoth
         Else
-            ShapeEx1.Style3D = veStyle3DAddShadow
+            ShapeEx1.Style3D = seStyle3DShadow
         End If
     Else
-        ShapeEx1.Style3D = veStyle3DNone
+        ShapeEx1.Style3D = seStyle3DNone
     End If
 End Property
 
