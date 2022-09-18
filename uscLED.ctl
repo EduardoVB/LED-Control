@@ -318,9 +318,7 @@ Public Property Let ColorOn(nValue As OLE_COLOR)
     If nValue <> mColorOn Then
         mColorOn = nValue
         mColor = ledCustomColor
-        If mState = ledOn Then
-            ShowControl
-        End If
+        ShowControl
         PropertyChanged "ColorOn"
     End If
 End Property
@@ -334,9 +332,7 @@ Public Property Let ColorOff(nValue As OLE_COLOR)
     If nValue <> mColorOff Then
         mColorOff = nValue
         mColor = ledCustomColor
-        If mState = ledOff Then
-            ShowControl
-        End If
+        ShowControl
         PropertyChanged "ColorOff"
     End If
 End Property
